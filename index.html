@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -143,20 +143,48 @@
             document.getElementById('totalPrice').value = total.toFixed(2) + "€";
         }
 
+        function detectDevice() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/windows phone/i.test(userAgent)) {
+                return "Windows Phone";
+            }
+
+            if (/android/i.test(userAgent)) {
+                return "Android";
+            }
+
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return "iOS";
+            }
+
+            if (/Macintosh/i.test(userAgent)) {
+                return "Mac";
+            }
+
+            if (/Windows/i.test(userAgent)) {
+                return "Windows";
+            }
+
+            return "Computer";
+        }
+
         function submitData() {
             const name = document.getElementById('selectedItem').value;
             const quantity = parseInt(document.getElementById('quantity').value);
             const total = document.getElementById('totalPrice').value;
             const timestamp = new Date().toLocaleString();
+            const device = detectDevice();
             
             const data = {
                 timestamp: timestamp,
                 product: name,
                 quantity: quantity,
-                total: total
+                total: total,
+                device: device
             };
             
-            const url = 'https://script.google.com/macros/s/AKfycbzo20r_p_zjeQEKPwlTqCWjR-JsfRBpKpJXxCU3L0N2M_9KC9-UGa_QWuR2JjhH-Xei5Q/exec'; // Sostituisci con l'URL del tuo Web App
+            const url = 'https://script.google.com/macros/s/AKfycbw_JMaxY9TaHGVoTrRTJeJqmuFx5NkFqHjGPgWMKP23tZYY3xfFLZb-o5nHlTMdc2dCtw/exec'; // Sostituisci con l'URL del tuo Web App
             
             fetch(url, {
                 method: 'POST',
