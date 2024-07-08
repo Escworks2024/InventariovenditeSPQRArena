@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -145,28 +145,38 @@
 
         function detectDevice() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            let device = "Computer";
+            let model = "";
 
             if (/windows phone/i.test(userAgent)) {
-                return "Windows Phone";
+                device = "Windows Phone";
+            } else if (/android/i.test(userAgent)) {
+                device = "Android";
+                const androidMatch = userAgent.match(/Android\s([0-9\.]*)/);
+                if (androidMatch) {
+                    model = `Android ${androidMatch[1]}`;
+                }
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                device = "iOS";
+                const iosMatch = userAgent.match(/OS\s([0-9\_]*)/);
+                if (iosMatch) {
+                    model = `iOS ${iosMatch[1].replace(/_/g, '.')}`;
+                }
+            } else if (/Macintosh/i.test(userAgent)) {
+                device = "Mac";
+                const macMatch = userAgent.match(/Mac OS X\s([0-9\_\.]*)/);
+                if (macMatch) {
+                    model = `Mac OS X ${macMatch[1].replace(/_/g, '.')}`;
+                }
+            } else if (/Windows/i.test(userAgent)) {
+                device = "Windows";
+                const windowsMatch = userAgent.match(/Windows NT\s([0-9\_]*)/);
+                if (windowsMatch) {
+                    model = `Windows NT ${windowsMatch[1]}`;
+                }
             }
 
-            if (/android/i.test(userAgent)) {
-                return "Android";
-            }
-
-            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                return "iOS";
-            }
-
-            if (/Macintosh/i.test(userAgent)) {
-                return "Mac";
-            }
-
-            if (/Windows/i.test(userAgent)) {
-                return "Windows";
-            }
-
-            return "Computer";
+            return { device, model };
         }
 
         function submitData() {
@@ -174,14 +184,14 @@
             const quantity = parseInt(document.getElementById('quantity').value);
             const total = document.getElementById('totalPrice').value;
             const timestamp = new Date().toLocaleString();
-            const device = detectDevice();
+            const { device, model } = detectDevice();
             
             const data = {
                 timestamp: timestamp,
                 product: name,
                 quantity: quantity,
                 total: total,
-                device: device
+                device: `${device} ${model}`
             };
             
             const url = 'https://script.google.com/macros/s/AKfycbw_JMaxY9TaHGVoTrRTJeJqmuFx5NkFqHjGPgWMKP23tZYY3xfFLZb-o5nHlTMdc2dCtw/exec'; // Sostituisci con l'URL del tuo Web App
