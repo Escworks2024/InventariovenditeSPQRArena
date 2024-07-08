@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Vendite</title>
+    <style>
+        body {
+            background-image: url('https://scontent.ffco2-1.fna.fbcdn.net/v/t39.30808-6/356827743_117482651385061_8051925680598876492_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=aS3jMDAzIQwQ7kNvgF_wt7E&_nc_ht=scontent.ffco2-1.fna&oh=00_AYA9qOD0jWZ4VGAmdUr-5BFZ3cTByVw5_bLhJBBde5ePVg&oe=66921C6E');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button-container, .dropdown-container, .input-container {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .green-button {
+            background-color: green;
+        }
+
+        .green-button:hover {
+            background-color: darkgreen;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[readonly] {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inventario Vendite</h1>
+        <div class="button-container">
+            <button class="button" onclick="selectItem('Pallini bianchi', 10)">Pallini bianchi - 10€</button>
+            <button class="button" onclick="selectItem('Pallini traccianti spqr', 15)">Pallini traccianti spqr - 15€</button>
+            <button class="button" onclick="selectItem('Pallini Novritsch', 20)">Pallini Novritsch - 20€</button>
+            <button class="button" onclick="selectItem('Ingresso infrasettimanale', 20)">Ingresso infrasettimanale - 20€</button>
+            <button class="button" onclick="selectItem('Ingresso riservato', 25)">Ingresso riservato - 25€</button>
+        </div>
+        <div class="dropdown-container">
+            <label for="additionalItems">Altri prodotti:</label>
+            <select id="additionalItems" onchange="selectDropdownItem()">
+                <option value="0">Seleziona un prodotto</option>
+                <option value="1">Caffè - 1€</option>
+                <option value="1">Acqua - 1€</option>
+                <option value="3">Redbull - 3€</option>
+                <option value="2.5">Gatorade - 2.5€</option>
+                <option value="2">Cocacola - 2€</option>
+            </select>
+        </div>
+        <div class="input-container">
+            <label>Prodotto selezionato: </label>
+            <input type="text" id="selectedItem" readonly>
+            <label>Quantità: </label>
+            <input type="number" id="quantity" value="1" min="1" onchange="updateTotal()">
+            <label>=</label>
+            <input type="text" id="totalPrice" readonly>
+        </div>
+        <button class="button green-button" onclick="submitData()">Invia</button>
+        <div id="calculator">
+            <label>Inserisci importo manuale:</label>
+            <input type="number" id="manualAmount" min="0" step="0.01">
+            <button class="button" onclick="addManualAmount()">Aggiungi Importo</button>
+        </div>
+    </div>
+    <script>
+        let selectedPrice = 0;
+
+        function selectItem(name, price) {
+            document.getElementById('selectedItem').value = name;
+            selectedPrice = price;
+            updateTotal();
+        }
+
+        function selectDropdownItem() {
+            const dropdown = document.getElementById('additionalItems');
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const price = parseFloat(selectedOption.value);
+            const name = selectedOption.text.split('-')[0].trim();
+            
+            if (price && name) {
+                selectItem(name, price);
+            }
+        }
+
+        function updateTotal() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const total = selectedPrice * quantity;
+            document.getElementById('totalPrice').value = total.toFixed(2) + "€";
+        }
+
+        function submitData() {
+            const name = document.getElementById('selectedItem').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const total = document.getElementById('totalPrice').value;
+            const timestamp = new Date().toLocaleString();
+            
+            const data = {
+                timestamp: timestamp,
+                product: name,
+                quantity: quantity,
+                total: total
+            };
+            
+            const url = 'https://script.google.com/macros/s/AKfycbzo20r_p_zjeQEKPwlTqCWjR-JsfRBpKpJXxCU3L0N2M_9KC9-UGa_QWuR2JjhH-Xei5Q/exec'; // Sostituisci con l'URL del tuo Web App
+            
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                alert('Dati inviati con successo!');
+                resetForm(); // Resetta i campi dopo l'invio
+            })
+            .catch(error => {
+                console.error('Errore:', error);
+                alert('Errore nell\'invio dei dati.');
+            });
+        }
+
+        function addManualAmount() {
+            const manualAmount = parseFloat(document.getElementById('manualAmount').value);
+            if (manualAmount && manualAmount > 0) {
+                document.getElementById('selectedItem').value = 'Importo manuale';
+                selectedPrice = manualAmount;
+                updateTotal();
+            } else {
+                alert('Inserisci un importo valido');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('selectedItem').value = '';
+            document.getElementById('quantity').value = 1;
+            document.getElementById('totalPrice').value = '';
+            document.getElementById('additionalItems').selectedIndex = 0;
+            document.getElementById('manualAmount').value = '';
+            selectedPrice = 0;
+        }
+    </script>
+</body>
+</html>
