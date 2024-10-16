@@ -107,6 +107,21 @@
             <label>=</label>
             <input type="text" id="totalPrice">
         </div>
+
+        <div class="input-container">
+            <label>Metodo di pagamento:</label>
+            <div>
+                <input type="checkbox" id="paypal" name="paymentMethod" value="Paypal">
+                <label for="paypal">Paypal</label>
+
+                <input type="checkbox" id="bonifico" name="paymentMethod" value="Bonifico">
+                <label for="bonifico">Bonifico</label>
+
+                <input type="checkbox" id="contanti" name="paymentMethod" value="Contanti">
+                <label for="contanti">Contanti</label>
+            </div>
+        </div>
+
         <button class="button green-button" onclick="submitData()">Invia</button>
         <div id="calculator">
             <label>Inserisci importo manuale:</label>
@@ -183,12 +198,26 @@
             const timestamp = new Date().toLocaleString();
             const { device, model } = detectDevice();
             
+            // Ottieni il metodo di pagamento selezionato
+            let paymentMethod = '';
+            if (document.getElementById('paypal').checked) {
+                paymentMethod = 'Paypal';
+            } else if (document.getElementById('bonifico').checked) {
+                paymentMethod = 'Bonifico';
+            } else if (document.getElementById('contanti').checked) {
+                paymentMethod = 'Contanti';
+            } else {
+                alert('Seleziona un metodo di pagamento.');
+                return;
+            }
+            
             const data = {
                 timestamp: timestamp,
                 product: name,
                 quantity: quantity,
                 total: total,
-                device: `${device} ${model}`
+                device: `${device} ${model}`,
+                paymentMethod: paymentMethod // Aggiungi il metodo di pagamento
             };
             
             const url = 'https://script.google.com/macros/s/AKfycbw_JMaxY9TaHGVoTrRTJeJqmuFx5NkFqHjGPgWMKP23tZYY3xfFLZb-o5nHlTMdc2dCtw/exec'; // Sostituisci con l'URL del tuo Web App
