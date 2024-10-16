@@ -107,21 +107,6 @@
             <label>=</label>
             <input type="text" id="totalPrice">
         </div>
-
-        <div class="input-container">
-            <label>Metodo di pagamento:</label>
-            <div>
-                <input type="radio" id="paypal" name="paymentMethod" value="Paypal">
-                <label for="paypal">Paypal</label>
-
-                <input type="radio" id="bonifico" name="paymentMethod" value="Bonifico">
-                <label for="bonifico">Bonifico</label>
-
-                <input type="radio" id="contanti" name="paymentMethod" value="Contanti">
-                <label for="contanti">Contanti</label>
-            </div>
-        </div>
-
         <button class="button green-button" onclick="submitData()">Invia</button>
         <div id="calculator">
             <label>Inserisci importo manuale:</label>
@@ -198,40 +183,27 @@
             const timestamp = new Date().toLocaleString();
             const { device, model } = detectDevice();
             
-            // Ottieni il metodo di pagamento selezionato
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-            if (!paymentMethod) {
-                alert('Seleziona un metodo di pagamento.');
-                return;
-            }
-            
             const data = {
                 timestamp: timestamp,
                 product: name,
                 quantity: quantity,
                 total: total,
-                device: `${device} ${model}`,
-                paymentMethod: paymentMethod
+                device: `${device} ${model}`
             };
-            
-            console.log('Dati inviati:', data);  // Aggiungi log per vedere i dati inviati
             
             const url = 'https://script.google.com/macros/s/AKfycbw_JMaxY9TaHGVoTrRTJeJqmuFx5NkFqHjGPgWMKP23tZYY3xfFLZb-o5nHlTMdc2dCtw/exec'; // Sostituisci con l'URL del tuo Web App
             
             fetch(url, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
             .then(response => {
-                if (response.ok) {
-                    alert('Dati inviati con successo!');
-                    resetForm(); // Resetta i campi dopo l'invio
-                } else {
-                    alert('Errore nell\'invio dei dati.');
-                }
+                alert('Dati inviati con successo!');
+                resetForm(); // Resetta i campi dopo l'invio
             })
             .catch(error => {
                 console.error('Errore:', error);
@@ -257,7 +229,6 @@
             document.getElementById('additionalItems').selectedIndex = 0;
             document.getElementById('manualAmount').value = '';
             selectedPrice = 0;
-            document.querySelector('input[name="paymentMethod"]:checked').checked = false;
         }
     </script>
 </body>
