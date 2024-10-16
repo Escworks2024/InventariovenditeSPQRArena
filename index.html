@@ -220,19 +220,25 @@
                 paymentMethod: paymentMethod // Aggiungi il metodo di pagamento
             };
             
+            console.log('Dati inviati:', data);  // Aggiungi log per vedere i dati inviati
+            
             const url = 'https://script.google.com/macros/s/AKfycbw_JMaxY9TaHGVoTrRTJeJqmuFx5NkFqHjGPgWMKP23tZYY3xfFLZb-o5nHlTMdc2dCtw/exec'; // Sostituisci con l'URL del tuo Web App
             
             fetch(url, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                alert('Dati inviati con successo!');
-                resetForm(); // Resetta i campi dopo l'invio
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    alert('Dati inviati con successo!');
+                    resetForm(); // Resetta i campi dopo l'invio
+                } else {
+                    alert('Errore nell\'invio dei dati: ' + data.message);
+                }
             })
             .catch(error => {
                 console.error('Errore:', error);
