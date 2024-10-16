@@ -111,13 +111,13 @@
         <div class="input-container">
             <label>Metodo di pagamento:</label>
             <div>
-                <input type="checkbox" id="paypal" name="paymentMethod" value="Paypal">
+                <input type="radio" id="paypal" name="paymentMethod" value="Paypal">
                 <label for="paypal">Paypal</label>
 
-                <input type="checkbox" id="bonifico" name="paymentMethod" value="Bonifico">
+                <input type="radio" id="bonifico" name="paymentMethod" value="Bonifico">
                 <label for="bonifico">Bonifico</label>
 
-                <input type="checkbox" id="contanti" name="paymentMethod" value="Contanti">
+                <input type="radio" id="contanti" name="paymentMethod" value="Contanti">
                 <label for="contanti">Contanti</label>
             </div>
         </div>
@@ -199,14 +199,8 @@
             const { device, model } = detectDevice();
             
             // Ottieni il metodo di pagamento selezionato
-            let paymentMethod = '';
-            if (document.getElementById('paypal').checked) {
-                paymentMethod = 'Paypal';
-            } else if (document.getElementById('bonifico').checked) {
-                paymentMethod = 'Bonifico';
-            } else if (document.getElementById('contanti').checked) {
-                paymentMethod = 'Contanti';
-            } else {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+            if (!paymentMethod) {
                 alert('Seleziona un metodo di pagamento.');
                 return;
             }
@@ -217,7 +211,7 @@
                 quantity: quantity,
                 total: total,
                 device: `${device} ${model}`,
-                paymentMethod: paymentMethod // Aggiungi il metodo di pagamento
+                paymentMethod: paymentMethod
             };
             
             console.log('Dati inviati:', data);  // Aggiungi log per vedere i dati inviati
@@ -231,13 +225,12 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
+            .then(response => {
+                if (response.ok) {
                     alert('Dati inviati con successo!');
                     resetForm(); // Resetta i campi dopo l'invio
                 } else {
-                    alert('Errore nell\'invio dei dati: ' + data.message);
+                    alert('Errore nell\'invio dei dati.');
                 }
             })
             .catch(error => {
@@ -264,6 +257,7 @@
             document.getElementById('additionalItems').selectedIndex = 0;
             document.getElementById('manualAmount').value = '';
             selectedPrice = 0;
+            document.querySelector('input[name="paymentMethod"]:checked').checked = false;
         }
     </script>
 </body>
